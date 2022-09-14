@@ -1,0 +1,4 @@
+#!/bin/bash
+[ -n "$KLIPPERSCREEN_REPO_SHIP" ] || KLIPPERSCREEN_REPO_SHIP=https://github.com/jordanruthe/KlipperScreen.git
+[ -n "$KLIPPERSCREEN_REPO_BRANCH" ] || KLIPPERSCREEN_REPO_BRANCH=master
+[ -n "$KLIPPERSCREEN_PYTHON_DIR" ] || KLIPPERSCREEN_PYTHON_DIR=/home/${BASE_USER}/klipperscreen-env

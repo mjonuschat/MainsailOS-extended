@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# KlipperScreen install script
+# Script that installs KlipperScreen service
+# Written by Morton Jonuschat
+# GPL V3
+########
+
+# Source error handling, leave this in place
+set -xe
+
+# Source CustomPIOS common.sh
+source /common.sh
+install_cleanup_trap
+
+# make sure that this module can be used standalone
+apt_update_skip
+
+check_install_pkgs "git" "virtualenv" "wireless-tools"
+
+## Installing KlipperScreen
+echo_green "Launching KlipperScreen install script (scripts/KlipperScreen-install.sh)"
+pushd "/home/${BASE_USER}" &> /dev/null || exit 1
+gitclone KLIPPERSCREEN_REPO klipperscreen
+
+sudo -u ${BASE_USER} bash -c \
+    "/usr/bin/env KLIPPERSCREEN_VENV=${KLIPPERSCREEN_PYTHON_DIR} \
+    /home/${BASE_USER}/klipperscreen/scripts/KlipperScreen-install.sh"
+
+# Installation complete
+popd || exit 1
