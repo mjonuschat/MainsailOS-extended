@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+#### MainsailOS Build Chain
+####
+#### Bootsplash
+
+# shellcheck enable=require-variable-braces
+
+## Source error handling, leave this in place
+set -Eex
+
+## Source CustomPIOS common.sh
+# shellcheck disable=SC1091
+source /common.sh
+install_cleanup_trap
+
+echo_green "Installing bootsplash ..."
+
+## Install all deps at once for time consumption reasons.
+## APT: Update Repo Database and install Dependencies
+# Force apt update
+apt update
+echo_green "Installing bootsplash dependencies ..."
+## Disabling shellcheck SC2086, because we want "wordsplitting"
+# shellcheck disable=SC2086
+check_install_pkgs ${BOOTSPLASH_DEPS}
+
+## Enable the plymouth based boot splash screen
+if [ -f "/etc/default/grub" ]; then
+    sed -i /etc/default/grub -e "s/GRUB_CMDLINE_LINUX_DEFAULT=\"\(.*\)\"/GRUB_CMDLINE_LINUX_DEFAULT=\"\1 logo.nologo consoleblank=0 loglevel=1 quiet splash vt.global_cursor_default=0 plymouth.ignore-serial-consoles\"/"
+    sed -i /etc/default/grub -e "s/  \+/ /g"
+    sed -i /etc/default/grub -e "s/GRUB_CMDLINE_LINUX_DEFAULT=\" /GRUB_CMDLINE_LINUX_DEFAULT=\"/"
+    update-grub || true
+fi
+
+## Disable the login prompt
+systemctl_if_exists disable getty@tty1
+
+## Disable the rainbow screen
+echo 'disable_splash=1' >>/boot/config.txt
+
+## Copy over the bootsplash images
+unpack /filesystem/root /
+
+## Activate the bootsplash image
+cp -vf "/usr/share/bootscreens/${BOOTSPLASH_IMAGE}" /usr/share/plymouth/themes/pix/splash.png
+
+## Enable systemd service
+systemctl_if_exists enable bootsplash.service
+
+## Disable the accelerated 3D GPU driver as it resets the framebuffer
+if [ "${BOOTSPLASH_DISABLE_V3D}" == "yes" ]; then
+    sed -i -E 's/^(dtoverlay=vc4-fkms-v3d)/# \1/g' /boot/config.txt
+fi
+
+## Done message
+echo_green "Installing bootsplash ... done!"

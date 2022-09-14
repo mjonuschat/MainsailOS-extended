@@ -1,0 +1,5 @@
+#!/bin/bash
+
+[ -n "$BOOTSPLASH_DEPS" ] || BOOTSPLASH_DEPS="rpd-plym-splash fbi"
+[ -n "$BOOTSPLASH_DISABLE_V3D" ] || BOOTSPLASH_DISABLE_V3D="yes"
+[ -n "$BOOTSPLASH_IMAGE" ] || BOOTSPLASH_IMAGE="voron/voron_splash_gunmetal.png"
