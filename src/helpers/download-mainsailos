@@ -1,0 +1,44 @@
+#!/bin/bash
+set -euo pipefail
+
+SOURCE=$(realpath -s "${BASH_SOURCE[0]}")
+HELPER_DIR=$(dirname "${SOURCE}")
+IMAGE_DIR=$(realpath -s "${HELPER_DIR}/../image")
+
+MAINSAIL_RELEASE_URL=https://api.github.com/repos/mainsail-crew/MainsailOS/releases/latest
+DOWNLOAD_TMP_DIR=$(mktemp -d -q)
+
+cleanup() {
+    rm -rf "${DOWNLOAD_TMP_DIR}"
+}
+trap cleanup 0
+
+# Download the latest release information
+curl -J -sSL "${MAINSAIL_RELEASE_URL}" >"${DOWNLOAD_TMP_DIR}/latest.json"
+
+IMAGE_DOWNLOAD_URL=$(jq -r '.assets[] .browser_download_url | select(.|endswith(".zip"))' "${DOWNLOAD_TMP_DIR}/latest.json")
+IMAGE_SHA256_URL=$(jq -r '.assets[] .browser_download_url | select(.|endswith(".sha256"))' "${DOWNLOAD_TMP_DIR}/latest.json")
+
+IMAGE_FILENAME=$(basename "${IMAGE_DOWNLOAD_URL}")
+IMAGE_FILENAME_SHA256=$(basename "${IMAGE_SHA256_URL}")
+
+# Only download the image if it is missing
+if [ ! -f "${IMAGE_DIR}/${IMAGE_FILENAME}" ]; then
+    echo "Downloading ${IMAGE_DOWNLOAD_URL}"
+    curl -o "${DOWNLOAD_TMP_DIR}/${IMAGE_FILENAME}" -SL --progress-bar "${IMAGE_DOWNLOAD_URL}"
+    mv "${DOWNLOAD_TMP_DIR}/${IMAGE_FILENAME}" "${IMAGE_DIR}"
+fi
+
+# Always download and verify the checksum
+pushd "${IMAGE_DIR}" || exit 1
+
+echo "Verifying checksum for ${IMAGE_FILENAME}"
+curl -o "${DOWNLOAD_TMP_DIR}/${IMAGE_FILENAME_SHA256}" -SL --progress-bar "${IMAGE_SHA256_URL}"
+if ! (
+    set +e
+    sha256sum -c --strict "${DOWNLOAD_TMP_DIR}/${IMAGE_FILENAME_SHA256}"
+); then
+    echo "Checksum verification for ${IMAGE_FILENAME} failed, aborting..."
+    rm -vf "${IMAGE_FILENAME}"
+    exit 1
+fi
