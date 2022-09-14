@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# shellcheck disable=all
+
+# Extract MainsailOS base image and version
+MAINSAIL_OS_IMG=$(ls -t ${DIST_PATH}/image/MainsailOS-*.{zip,7z,xz} | head -n 1)
+UPSTREAM_MAINSAIL_VERSION=${BASE_ZIP_IMG%.*}
+UPSTREAM_MAINSAIL_VERSION=${UPSTREAM_MAINSAIL_VERSION##*-}
+
+# Base image settings
+export BASE_ZIP_IMG="${MAINSAIL_OS_IMG}"
+export BASE_IMAGE_ENLARGEROOT=2500
+export BASE_RELEASE_COMPRESS=yes
+export BASE_IMAGE_RESIZEROOT=600
+
+# Localizations settings - override in config.local if desired
+export BASE_CONFIG_LOCALE=en_US.UTF-8
+export BASE_CONFIG_TIMEZONE=America/Los_Angeles
+
+# Export new distribution name and version
+export DIST_NAME=MainsailOS-extended
+export DIST_VERSION="extended"
+
+# List of modules to be run
+export MODULES="base(pkgupgrade,passwordless-sudo,klipperscreen,raspicam,bootsplash,password-for-sudo)"
+
+# rpi-imager json generator settings
+export RPI_IMAGER_NAME="${DIST_NAME}"
+export RPI_IMAGER_DESCRIPTION="A Raspberry Pi OS based distribution for 3D Printers"
+export RPI_IMAGER_WEBSITE="https://github.com/mjonuschat/MainsailOS-extended"
+export RPI_IMAGER_ICON="https://raw.githubusercontent.com/mainsail-crew/MainsailOS/develop/.github/sdcard-logo.png"
