@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+# Download/verify the MainsailOS base image
+./src/helpers/download-mainsailos
+
+docker-compose run --rm custompios build
