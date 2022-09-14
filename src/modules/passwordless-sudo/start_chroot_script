@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+#### MainsailOS Build Chain
+####
+#### Bootsplash
+
+# shellcheck enable=require-variable-braces
+
+## Source error handling, leave this in place
+set -Eex
+
+## Source CustomPIOS common.sh
+# shellcheck disable=SC1091
+source /common.sh
+install_cleanup_trap
+
+echo_red "Enabling passwordless sudo for pi user ..."
+unpack /filesystem/root /
+chown -v root:root /etc/sudoers.d/010_pi-nopasswd
+chmod 0440 /etc/sudoers.d/010_pi-nopasswd
