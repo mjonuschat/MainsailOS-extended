@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+#### MainsailOS Build Chain
+####
+#### Mosquitto
+
+# shellcheck enable=require-variable-braces
+
+## Source error handling, leave this in place
+set -Eex
+
+## Source CustomPIOS common.sh
+# shellcheck disable=SC1091
+source /common.sh
+install_cleanup_trap
+
+echo_green "Installing Mosquitto ..."
+
+## Install all deps at once for time consumption reasons.
+## APT: Update Repo Database and install Dependencies
+# Force apt update
+apt update
+echo_green "Installing Mosquitto dependencies ..."
+## Disabling shellcheck SC2086, because we want "wordsplitting"
+# shellcheck disable=SC2086
+check_install_pkgs ${MOSQUITTO_DEPS}
+
+## Copy over the bootsplash images
+unpack /filesystem/root /
+
+## Create the default configuration
+if [ -z "${MOSQUITTO_USERNAME}" ]; then
+    echo "allow_anonymous true" >>/etc/mosquitto/conf.d/listener.conf
+else
+    echo "allow_anonymous false" >>/etc/mosquitto/conf.d/listener.conf
+    echo "password_file /etc/mosquitto/passwd" >>/etc/mosquitto/conf.d/listener.conf
+
+    echo "${MOSQUITTO_USERNAME}:${MOSQUITTO_PASSWORD}" >/etc/mosquitto/passwd
+
+    # Encrypt the passwords
+    mosquitto_passwd -U /etc/mosquitto/passwd
+fi
+
+## Enable systemd service
+systemctl_if_exists enable mosquitto.service
+
+## Done message
+echo_green "Installing Mosquitto ... done!"

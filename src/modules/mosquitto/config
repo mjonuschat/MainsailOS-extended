@@ -1,0 +1,5 @@
+#!/bin/bash
+
+[ -n "$MOSQUITTO_DEPS" ] || MOSQUITTO_DEPS="mosquitto"
+[ -n "$MOSQUITTO_USERNAME" ] || MOSQUITTO_USERNAME=""
+[ -n "$MOSQUITTO_PASSWORD" ] || MOSQUITTO_PASSWORD=""
