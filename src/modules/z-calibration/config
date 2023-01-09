@@ -1,0 +1,4 @@
+#!/bin/bash
+[ -n "$Z_CALIBRATION_REPO_SHIP" ] || Z_CALIBRATION_REPO_SHIP=https://github.com/protoloft/klipper_z_calibration.git
+[ -n "$Z_CALIBRATION_REPO_BRANCH" ] || Z_CALIBRATION_REPO_BRANCH=master
+[ -n "$Z_CALIBRATION_UPDATE_MANAGER_ENABLED" ] || Z_CALIBRATION_UPDATE_MANAGER_ENABLED="yes"

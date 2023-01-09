@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# Klipper Z-Calibration plugin install script
+# Script that installs the Klipper plugin for a self calibrating Z offset
+# Written by Morton Jonuschat
+# GPL V3
+########
+
+# Source error handling, leave this in place
+set -xe
+
+# Source CustomPIOS common.sh
+source /common.sh
+install_cleanup_trap
+
+# make sure that this module can be used standalone
+apt_update_skip
+
+check_install_pkgs "git"
+
+## Installing KlipperScreen
+echo_green "Installing Klipper plugin for a self calibrating Z offset"
+pushd "/home/${BASE_USER}" &>/dev/null || exit 1
+gitclone Z_CALIBRATION_REPO klipper_z_calibration
+
+ln -sf "/home/${BASE_USER}/klipper_z_calibration/z_calibration.py" \
+    "/home/${BASE_USER}/klipper/klippy/extras/z_calibration.py"
+
+## Unpack the filesystem
+unpack "/filesystem/home/${BASE_USER}" "/home/${BASE_USER}" "${BASE_USER}"
+
+## Configure automatic updates
+if [ "${Z_CALIBRATION_UPDATE_MANAGER_ENABLED}" == "yes" ]; then
+    sed -i -E -e "s#@@@ORIGIN@@@#${Z_CALIBRATION_REPO_SHIP}###g" "/home/${BASE_USER}/printer_data/config/moonraker.d/update_manager/z-calibration.conf"
+else
+    rm -f "/home/${BASE_USER}/printer_data/config/moonraker.d/update_manager/z-calibration.conf"
+fi
+
+
+# Installation complete
+popd || exit 1
