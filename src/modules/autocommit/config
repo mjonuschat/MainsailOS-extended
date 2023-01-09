@@ -1,0 +1,4 @@
+#!/bin/bash
+[ -n "$AUTOCOMMIT_PLUGIN_URL" ] || AUTOCOMMIT_PLUGIN_URL=https://raw.githubusercontent.com/th33xitus/kiauh/master/resources/gcode_shell_command.py
+[ -n "$AUTOCOMMIT_USER_NAME" ] || AUTOCOMMIT_USER_NAME="MainsailOS Config Backup"
+[ -n "$AUTOCOMMIT_USER_EMAIL" ] || AUTOCOMMIT_USER_EMAIL=""

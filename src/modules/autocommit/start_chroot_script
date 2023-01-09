@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+# Klipper Z-Calibration plugin install script
+# Script that installs the Klipper plugin for executing shell commands from G-Code
+# Written by Morton Jonuschat
+# GPL V3
+########
+
+# Source error handling, leave this in place
+set -xe
+
+# Source CustomPIOS common.sh
+source /common.sh
+install_cleanup_trap
+
+# make sure that this module can be used standalone
+apt_update_skip
+
+check_install_pkgs "git" "curl"
+
+## Installing KlipperScreen
+echo_green "Installing Klipper plugin for executing shell commands from G-Code"
+pushd "/home/${BASE_USER}" &>/dev/null || exit 1
+curl -sSL -o "/home/${BASE_USER}/klipper/klippy/extras/gcode_shell_command.py" \
+    "${AUTOCOMMIT_PLUGIN_URL}"
+
+## Unpack the filesystem
+## Copy over the bootsplash images
+unpack /filesystem/root /
+
+#!/usr/bin/env bash
+# Klipper Z-Calibration plugin install script
+# Script that installs the Klipper plugin for a self calibrating Z offset
+# Written by Morton Jonuschat
+# GPL V3
+########
+
+# Source error handling, leave this in place
+set -xe
+
+# Source CustomPIOS common.sh
+source /common.sh
+install_cleanup_trap
+
+# make sure that this module can be used standalone
+apt_update_skip
+
+check_install_pkgs "git"
+
+## Installing KlipperScreen
+echo_green "Installing G-Code Shell Command Klipper Plugin"
+pushd "/home/${BASE_USER}" &>/dev/null || exit 1
+curl -sSL -o "/home/${BASE_USER}/klipper/klippy/extras/gcode_shell_command.py" \
+    "${AUTOCOMMIT_PLUGIN_URL}"
+
+## Unpack the filesystem
+unpack /filesystem/root /
+unpack "/filesystem/home/${BASE_USER}" "/home/${BASE_USER}" "${BASE_USER}"
+
+echo_green "Configuring autocommit backup"
+pushd "/home/${BASE_USER}/printer_data" &>/dev/null || exit 1
+git init -b main
+
+if [[ -n "${AUTOCOMMIT_USER_NAME}" ]]; then
+    git config user.name "${AUTOCOMMIT_USER_NAME}"
+fi
+
+if [[ -n "${AUTOCOMMIT_USER_EMAIL}" ]]; then
+    git config user.email "${AUTOCOMMIT_USER_EMAIL}"
+else
+    git config user.email "pi@localhost"
+fi
+
+git add .
+git commit -am "Initial commit"
+popd || exit 1
+
+# Installation complete
+popd || exit 1
