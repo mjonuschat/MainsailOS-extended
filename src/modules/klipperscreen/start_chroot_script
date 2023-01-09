@@ -22,9 +22,11 @@ echo_green "Launching KlipperScreen install script (scripts/KlipperScreen-instal
 pushd "/home/${BASE_USER}" &> /dev/null || exit 1
 gitclone KLIPPERSCREEN_REPO klipperscreen
 
-sudo -u ${BASE_USER} bash -c \
+sudo -u "${BASE_USER}" bash -c \
     "/usr/bin/env KLIPPERSCREEN_VENV=${KLIPPERSCREEN_PYTHON_DIR} \
     /home/${BASE_USER}/klipperscreen/scripts/KlipperScreen-install.sh"
+
+unpack "/filesystem/home/${BASE_USER}" "/home/${BASE_USER}" "${BASE_USER}"
 
 # Installation complete
 popd || exit 1
