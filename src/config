@@ -2,7 +2,7 @@
 # shellcheck disable=all
 
 # Extract MainsailOS base image and version
-MAINSAIL_OS_IMG=$(ls -t ${DIST_PATH}/image/MainsailOS-*.{zip,7z,xz} | head -n 1)
+MAINSAIL_OS_IMG=$(ls -t ${DIST_PATH}/image/*MainsailOS-*.{zip,7z,xz} | head -n 1)
 UPSTREAM_MAINSAIL_VERSION=${BASE_ZIP_IMG%.*}
 UPSTREAM_MAINSAIL_VERSION=${UPSTREAM_MAINSAIL_VERSION##*-}
 
