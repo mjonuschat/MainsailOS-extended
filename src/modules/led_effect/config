@@ -1,0 +1,4 @@
+#!/bin/bash
+[ -n "$LED_EFFECT_REPO_SHIP" ] || LED_EFFECT_REPO_SHIP=https://github.com/julianschill/klipper-led_effect.git
+[ -n "$LED_EFFECT_REPO_BRANCH" ] || LED_EFFECT_REPO_BRANCH=master
+[ -n "$LED_EFFECT_UPDATE_MANAGER_ENABLED" ] || LED_EFFECT_UPDATE_MANAGER_ENABLED="yes"

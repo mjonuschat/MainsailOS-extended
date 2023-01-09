@@ -23,7 +23,7 @@ export DIST_NAME=MainsailOS-extended
 export DIST_VERSION="extended"
 
 # List of modules to be run
-export MODULES="base(pkgupgrade,passwordless-sudo,moonraker,klipperscreen,raspicam,bootsplash,z-calibration,autocommit,password-for-sudo)"
+export MODULES="base(pkgupgrade,passwordless-sudo,moonraker,klipperscreen,raspicam,bootsplash,z-calibration,led_effect,autocommit,password-for-sudo)"
 
 # rpi-imager json generator settings
 export RPI_IMAGER_NAME="${DIST_NAME}"
