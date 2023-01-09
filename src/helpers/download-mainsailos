@@ -16,8 +16,8 @@ trap cleanup 0
 # Download the latest release information
 curl -J -sSL "${MAINSAIL_RELEASE_URL}" >"${DOWNLOAD_TMP_DIR}/latest.json"
 
-IMAGE_DOWNLOAD_URL=$(jq -r '.assets[] .browser_download_url | select(.|endswith(".zip"))' "${DOWNLOAD_TMP_DIR}/latest.json")
-IMAGE_SHA256_URL=$(jq -r '.assets[] .browser_download_url | select(.|endswith(".sha256"))' "${DOWNLOAD_TMP_DIR}/latest.json")
+IMAGE_DOWNLOAD_URL=$(jq -r '.assets[] .browser_download_url | select(.|endswith(".xz"))' "${DOWNLOAD_TMP_DIR}/latest.json")
+IMAGE_SHA256_URL=$(jq -r '.assets[] .browser_download_url | select(.|endswith(".xz.sha256"))' "${DOWNLOAD_TMP_DIR}/latest.json")
 
 IMAGE_FILENAME=$(basename "${IMAGE_DOWNLOAD_URL}")
 IMAGE_FILENAME_SHA256=$(basename "${IMAGE_SHA256_URL}")
