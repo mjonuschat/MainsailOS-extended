@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+# Klipper Z-Calibration plugin install script
+# Script that installs the Klipper plugin for executing shell commands from G-Code
+# Written by Morton Jonuschat
+# GPL V3
+########
+
+# Source error handling, leave this in place
+set -xe
+
+# Source CustomPIOS common.sh
+source /common.sh
+install_cleanup_trap
+
+# make sure that this module can be used standalone
+apt_update_skip
+
+check_install_pkgs "git" "curl"
+
+## Installing KlipperScreen
+echo_green "Setting up a modular moonraker config"
+pushd "/home/${BASE_USER}" &>/dev/null || exit 1
+curl -sSL -o "/home/${BASE_USER}/klipper/klippy/extras/gcode_shell_command.py" \
+    "${AUTOCOMMIT_PLUGIN_URL}"
+
+#!/usr/bin/env bash
+# Klipper Z-Calibration plugin install script
+# Script that installs the Klipper plugin for a self calibrating Z offset
+# Written by Morton Jonuschat
+# GPL V3
+########
+
+# Source error handling, leave this in place
+set -xe
+
+# Source CustomPIOS common.sh
+source /common.sh
+install_cleanup_trap
+
+pushd "/home/${BASE_USER}" &>/dev/null || exit 1
+
+MOONRAKER_CONFIG_BASE_PATH="/home/${BASE_USER}/printer_data/config/moonraker.d"
+
+echo_green "Setting up a modular moonraker config"
+
+## Unpack the filesystem
+unpack "/filesystem/home/${BASE_USER}" "/home/${BASE_USER}" "${BASE_USER}"
+
+ln -nsf "${MOONRAKER_CONFIG_BASE_PATH}/features/announcements_mainsail.conf" \
+    "${MOONRAKER_CONFIG_BASE_PATH}/enabled-features"
+
+if [ "${MOONRAKER_ENABLE_HISTORY}" == "yes" ]; then
+    ln -nsf "${MOONRAKER_CONFIG_BASE_PATH}/features/history.conf" \
+        "${MOONRAKER_CONFIG_BASE_PATH}/enabled-features"
+fi
+
+if [ "${MOONRAKER_ENABLE_OCTOPRINT_COMPAT}" == "yes" ]; then
+    ln -nsf "${MOONRAKER_CONFIG_BASE_PATH}/features/octoprint_compat.conf" \
+        "${MOONRAKER_CONFIG_BASE_PATH}/enabled-features"
+fi
+
+if [ "${MOONRAKER_ENABLE_UPLOAD_QUEUE}" == "yes" ]; then
+    ln -nsf "${MOONRAKER_CONFIG_BASE_PATH}/features/upload_queue.conf" \
+        "${MOONRAKER_CONFIG_BASE_PATH}/enabled-features"
+
+    if [ "${MOONRAKER_ENABLE_UPLOAD_QUEUE}" == "yes" ]; then
+        ln -nsf "${MOONRAKER_CONFIG_BASE_PATH}/features/job_queue_autostart.conf" \
+            "${MOONRAKER_CONFIG_BASE_PATH}/enabled-features"
+    fi
+fi
+
+if [ "${MOONRAKER_ENABLE_OBJECT_PROCESSING}" == "yes" ]; then
+    ln -nsf "${MOONRAKER_CONFIG_BASE_PATH}/features/object_processing.conf" \
+        "${MOONRAKER_CONFIG_BASE_PATH}/enabled-features"
+fi
+
+if [ "${MOONRAKER_ENABLE_TIMELAPSE}" == "yes" ]; then
+    ln -nsf "${MOONRAKER_CONFIG_BASE_PATH}/features/timelapse.conf" \
+        "${MOONRAKER_CONFIG_BASE_PATH}/enabled-features"
+fi
+
+# Installation complete
+popd || exit 1

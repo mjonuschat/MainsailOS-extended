@@ -1,0 +1,2 @@
+#!/bin/bash
+[ -n "$MOONRAKER_MODULAR_CONFIG" ] || MOONRAKER_MODULAR_CONFIG="y"
